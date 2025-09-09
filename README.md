@@ -4,7 +4,7 @@
 
 ### Main System Demo
 
-[![System Demo](https://img.shields.io/badge/🎥_Watch_Demo-Video-blue?style=for-the-badge)](docs/videos/main_demo.mp4)
+[![System Demo](https://img.shields.io/badge/🎥_Watch_Demo-Video-blue?style=for-the-badge)](https://www.bilibili.com/video/BV1NVYNzREpB/?share_source=copy_web&vd_source=fde5311dcf7c67e738fc96cf42870f16)
 
 **Click the button above to watch the complete system demonstration**
 
