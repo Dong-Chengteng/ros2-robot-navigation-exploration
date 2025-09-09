@@ -176,6 +176,12 @@ ros2 topic list
 ros2 service list
 ```
 
+### Optimization Direction
+1. **Trajectory tracking**: More advanced methods can be used to replace PID control, such as LQR, MRP, and Reinforcement learning to solove Frontier Bias Problem.
+2. **Frontier point exploration algorithme**: RRT find frontier point will cost Long calculation time，it makes the exploration process less smooth. 
+3. **DWA parameters optimization**: Using the current DWA parameters, the forward speed is very slow when fine-tuning for obstacles, which needs further optimization.
+
+
 ## Contributing
 
 Welcome to submit Issues and Pull Requests to improve this project.
