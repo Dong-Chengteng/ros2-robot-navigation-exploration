@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   test:
     runs-on: ubuntu-22.04
@@ -21,20 +26,35 @@ jobs:
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '${{ matrix.python-version }}'
     
     - name: Install ROS2 ${{ matrix.ros-distro }}
-      uses: ros-tooling/setup-ros@v0.6
+      uses: ros-tooling/setup-ros@v0.7.5
       with:
         required-ros-distributions: ${{ matrix.ros-distro }}
+      continue-on-error: true
+    
+    - name: Fallback ROS2 installation
+      if: failure()
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository universe
+        sudo apt-get update && sudo apt-get install -y curl
+        sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+        sudo apt-get update
+        sudo apt-get install -y ros-${{ matrix.ros-distro }}-desktop python3-colcon-common-extensions
     
     - name: Install system dependencies
       run: |
-        sudo apt update
-        sudo apt install -y python3-pip python3-colcon-common-extensions
-        sudo apt install -y ros-${{ matrix.ros-distro }}-navigation2
-        sudo apt install -y ros-${{ matrix.ros-distro }}-slam-toolbox
-        sudo apt install -y ros-${{ matrix.ros-distro }}-gazebo-ros-pkgs
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          python3-pip \
+          python3-colcon-common-extensions \
+          ros-${{ matrix.ros-distro }}-navigation2 \
+          ros-${{ matrix.ros-distro }}-slam-toolbox \
+          ros-${{ matrix.ros-distro }}-gazebo-ros-pkgs
     
     - name: Install Python dependencies
       run: |
@@ -93,19 +113,35 @@ jobs:
     - name: Set up Python 3.8
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: '3.8'
     
     - name: Install ROS2 Humble
-      uses: ros-tooling/setup-ros@v0.6
+      uses: ros-tooling/setup-ros@v0.7.5
       with:
         required-ros-distributions: humble
+      continue-on-error: true
+    
+    - name: Fallback ROS2 installation
+      if: failure()
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository universe
+        sudo apt-get update && sudo apt-get install -y curl
+        sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+        sudo apt-get update
+        sudo apt-get install -y ros-humble-desktop python3-colcon-common-extensions
     
     - name: Install dependencies
       run: |
-        sudo apt update
-        sudo apt install -y python3-pip python3-colcon-common-extensions
-        sudo apt install -y ros-humble-navigation2 ros-humble-slam-toolbox
-        sudo apt install -y ros-humble-gazebo-ros-pkgs
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          python3-pip \
+          python3-colcon-common-extensions \
+          ros-humble-navigation2 \
+          ros-humble-slam-toolbox \
+          ros-humble-gazebo-ros-pkgs
         pip install -r requirements.txt
     
     - name: Build package
@@ -130,12 +166,16 @@ jobs:
 
   security:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@0.24.0
       with:
         scan-type: 'fs'
         scan-ref: '.'
@@ -143,10 +183,12 @@ jobs:
         output: 'trivy-results.sarif'
     
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
+      uses: github/codeql-action/upload-sarif@v3
+      if: always() && hashFiles('trivy-results.sarif') != ''
       with:
         sarif_file: 'trivy-results.sarif'
+        category: 'trivy-scan'
+      continue-on-error: true
 
   documentation:
     runs-on: ubuntu-22.04
@@ -157,17 +199,28 @@ jobs:
     - name: Set up Python 3.8
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: '3.8'
     
     - name: Install documentation dependencies
       run: |
-        pip install sphinx sphinx-rtd-theme
-        pip install sphinxcontrib-mermaid
+        pip install -r docs/requirements.txt
     
     - name: Build documentation
       run: |
         cd docs
-        sphinx-build -b html . _build/html
+        # Use the build script which handles both Sphinx and fallback
+        bash build_docs.sh
+      continue-on-error: true
+    
+    - name: Check documentation build
+      run: |
+        if [ -d "docs/_build/html" ]; then
+          echo "Documentation built successfully"
+          ls -la docs/_build/html/
+        else
+          echo "Documentation build failed"
+          exit 1
+        fi
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
