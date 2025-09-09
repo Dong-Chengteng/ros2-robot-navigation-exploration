@@ -29,7 +29,7 @@ jobs:
         python-version: '${{ matrix.python-version }}'
     
     - name: Install ROS2 ${{ matrix.ros-distro }}
-      uses: ros-tooling/setup-ros@v0.7.5
+      uses: ros-tooling/setup-ros@v0.7.4
       with:
         required-ros-distributions: ${{ matrix.ros-distro }}
       continue-on-error: true
@@ -116,7 +116,7 @@ jobs:
         python-version: '3.10'
     
     - name: Install ROS2 Humble
-      uses: ros-tooling/setup-ros@v0.7.5
+      uses: ros-tooling/setup-ros@v0.7.4
       with:
         required-ros-distributions: humble
       continue-on-error: true
@@ -222,9 +222,9 @@ jobs:
           exit 1
         fi
     
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
+    - name: Upload documentation artifact
+      uses: actions/upload-artifact@v4
       if: github.ref == 'refs/heads/main'
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/_build/html
+        name: documentation-build
+        path: ./docs/_build/html

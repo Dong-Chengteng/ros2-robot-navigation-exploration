@@ -1,10 +1,7 @@
-name: Documentation Build
+name: Deploy Documentation
 
 on:
   push:
-    branches: [ main, develop ]
-    paths: ['docs/**', 'src/**', '*.md']
-  pull_request:
     branches: [ main ]
     paths: ['docs/**', 'src/**', '*.md']
 
@@ -12,17 +9,23 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  deployments: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-docs:
-    runs-on: ubuntu-22.04
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
@@ -35,19 +38,7 @@ jobs:
     - name: Build documentation
       run: |
         cd docs
-        # Use the build script which handles both Sphinx and fallback
         bash build_docs.sh
-    
-    - name: Check build output
-      run: |
-        if [ -d "docs/_build/html" ]; then
-          echo "Documentation built successfully"
-          echo "Files in build directory:"
-          ls -la docs/_build/html/
-        else
-          echo "Documentation build failed"
-          exit 1
-        fi
     
     - name: Setup Pages
       uses: actions/configure-pages@v3
