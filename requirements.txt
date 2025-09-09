@@ -1,0 +1,17 @@
+# ROS2 Python Dependencies
+rclpy>=3.3.0
+geometry_msgs>=4.2.0
+nav_msgs>=4.2.0
+nav2_msgs>=1.1.0
+action_msgs>=1.0.0
+builtin_interfaces>=1.0.0
+sensor_msgs>=4.2.0
+std_msgs>=4.2.0
+
+# Scientific Computing
+numpy>=1.21.0
+scipy>=1.7.0
+matplotlib>=3.5.0
+
+# Other Dependencies
+setuptools>=50.0.0

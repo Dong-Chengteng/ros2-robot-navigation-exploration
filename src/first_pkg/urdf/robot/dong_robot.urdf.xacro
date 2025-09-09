@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dong_robot">
+<xacro:include filename="$(find first_pkg)/urdf/robot/common_inertial.xacro"/>
+<!-- 机体 -->
+<xacro:include filename="$(find first_pkg)/urdf/robot/base.urdf.xacro"/>
+<!-- 传感器 -->
+<xacro:include filename="$(find first_pkg)/urdf/robot/sensor/camera.urdf.xacro"/>
+<xacro:include filename="$(find first_pkg)/urdf/robot/sensor/imu.urdf.xacro"/>
+<xacro:include filename="$(find first_pkg)/urdf/robot/sensor/laser.urdf.xacro"/>
+<xacro:include filename="$(find first_pkg)/urdf/robot/sensor/infrared_sensor.urdf.xacro"/>
+<!-- 执行装置 -->
+<xacro:include filename="$(find first_pkg)/urdf/robot/actor/wheel.urdf.xacro"/>
+<xacro:include filename="$(find first_pkg)/urdf/robot/actor/caster.urdf.xacro"/>
+<!-- 插件 -->
+<xacro:include filename="$(find first_pkg)/urdf/robot/plugins/gazebo_control_plugin.xacro"/>
+<xacro:include filename="$(find first_pkg)/urdf/robot/plugins/gazebo_sensor_plugin.xacro"/>
+<xacro:include filename="$(find first_pkg)/urdf/robot/plugins/gazebo_infrared_plugin.xacro"/>
+
+
+
+
+<xacro:base_xacro radius = '0.12' length = '0.1'></xacro:base_xacro>
+<xacro:imu_xacro xyz="0.0 0.0 0.05" />
+<xacro:camera_xacro xyz="0.1 0.0 0.075" />
+<xacro:laser_xacro xyz="0.0 0.0 0.10" />
+<xacro:infrared_sensor_xacro xyz="0.15 0.0 0.075" />
+<xacro:wheel_xacro wheel_name = "right_wheel" xyz="0.0 0.1 -0.06" />
+<xacro:wheel_xacro wheel_name = "left_wheel" xyz="0.0 -0.1 -0.06" />
+<xacro:caster_xacro caster_wheel_name = "ahead_caster_wheel" xyz="0.08 0.0 -0.076" />
+<xacro:caster_xacro caster_wheel_name = "behind_caster_wheel" xyz="-0.08 0.0 -0.076" />
+<xacro:gazebo_control_plugin />
+<xacro:gazebo_sensor_plugin />
+<xacro:gazebo_infrared_plugin />
+
+</robot>

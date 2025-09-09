@@ -1,0 +1,128 @@
+# 红外线建图SLAM配置 - 高速更新版本
+# 解决地图更新速度慢的问题
+
+slam_toolbox:
+  ros__parameters:
+
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    # ROS Parameters - 红外线传感器专用设置
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /infrared_scan  # 使用红外线扫描数据
+    use_map_saver: true
+    mode: mapping
+
+    # 红外线传感器范围设置
+    min_laser_range: 0.05  # 红外线最小检测距离
+    max_laser_range: 8.0   # 红外线最大检测距离
+
+    # 地图更新设置 - 高速更新
+    map_publish_period: 0.01  # 从0.05降低到0.01秒
+    map_update_interval: 0.02  # 从0.1降低到0.02秒
+    debug_logging: true
+    throttle_scans: 1
+    transform_publish_period: 0.01  # 从0.05降低到0.01秒
+    resolution: 0.05
+    minimum_time_interval: 0.01  # 从0.05降低到0.01秒
+    transform_timeout: 0.1  # 从0.3降低到0.1秒
+    tf_buffer_duration: 30.
+    stack_size_to_use: 40000000
+    enable_interactive_mode: true
+
+    # 扫描匹配参数 - 高速响应
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.01  # 从0.05降低到0.01米
+    minimum_travel_heading: 0.01   # 从0.05降低到0.01弧度
+    scan_buffer_size: 50           # 从30增加到50
+    scan_buffer_maximum_scan_distance: 8.0
+    link_match_minimum_response_fine: 0.1  
+    link_scan_maximum_distance: 2.0
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true 
+    loop_match_minimum_chain_size: 10  # 从15降低到10
+    loop_match_maximum_variance_coarse: 2.0  
+    loop_match_minimum_response_coarse: 0.4    
+    loop_match_minimum_response_fine: 0.5
+
+    # 相关性搜索参数 - 快速搜索
+    correlation_search_space_dimension: 0.2  # 从0.3降低到0.2
+    correlation_search_space_resolution: 0.01  # 从0.02降低到0.01
+    correlation_search_space_smear_deviation: 0.1  # 从0.15降低到0.1
+
+    # 回环检测参数
+    loop_search_space_dimension: 6.0  # 从8.0降低到6.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # 扫描匹配参数 - 快速匹配
+    distance_variance_penalty: 0.2  # 从0.3降低到0.2
+    angle_variance_penalty: 0.4     # 从0.6降低到0.4
+
+    fine_search_angle_offset: 0.00174  # 从0.00349降低到0.00174
+    coarse_search_angle_offset: 0.174  # 从0.349降低到0.174
+    coarse_angle_resolution: 0.0174    # 从0.0349降低到0.0174
+    minimum_angle_penalty: 0.5  # 从0.7降低到0.5
+    minimum_distance_penalty: 0.2  # 从0.3降低到0.2
+    use_response_expansion: true
+
+    # 红外线特殊参数
+    infrared_material_sensitivity: 0.8
+    infrared_ambient_noise_reduction: 0.9
+    
+    # 更新频率 - 高速更新
+    update_rate: 50.0  # 从10.0增加到50.0
+    map_update_rate: 50.0  # 从10.0增加到50.0
+    scan_update_rate: 50.0  # 从10.0增加到50.0
+
+    # 激光模型参数 - 快速处理
+    laser_model_type: "likelihood_field"
+    laser_likelihood_max_dist: 1.0  # 从1.5降低到1.0
+    laser_max_beams: 20  # 从30降低到20
+    laser_z_hit: 0.9
+    laser_z_short: 0.1
+    laser_z_max: 0.05
+    laser_z_rand: 0.05
+    laser_sigma_hit: 0.1  # 从0.15降低到0.1
+    laser_lambda_short: 0.1
+
+    # 调试参数
+    debug_logging: true
+
+    # 消息队列参数 - 增大队列
+    max_queue_size: 100  # 从50增加到100
+    transform_publish_period: 0.01  # 从0.05降低到0.01
+
+    # 红外线特殊优化参数
+    front_infrared_weight: 2.5
+    side_infrared_weight: 1.0
+    rear_infrared_weight: 0.8
+
+    # 红外线扫描角度范围
+    scan_angle_min: -1.57
+    scan_angle_max: 1.57
+    scan_angle_increment: 0.0174533
+
+    # 地图分辨率
+    resolution: 0.05
+
+    # 地图尺寸限制
+    map_size: 3000  # 从5000降低到3000
+
+    # 新增：实时更新参数
+    enable_realtime_updates: true
+    realtime_update_threshold: 0.005  # 5毫米移动就触发更新
+    realtime_scan_processing: true
+    immediate_map_publish: true
+
+
+
+

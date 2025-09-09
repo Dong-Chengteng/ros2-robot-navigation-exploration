@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+<xacro:include filename="$(find first_pkg)/urdf/robot/common_inertial.xacro"/>
+    <xacro:macro name="camera_xacro" params = "xyz">
+        <link name="camera_optic_link">
+            
+        </link>
+        <!-- CAMERA 模块 -->
+        <link name="camera_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.02 0.02 0.02"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </visual>
+            <collision>
+                 <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.02 0.02 0.02"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>               
+            </collision>
+            <xacro:inertial_box mass = "0.1" x = "0.02" y = "0.02" z = "0.02"/>
+        </link>
+
+        <!-- CAMERA连接 -->
+        <joint name="camera_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="camera_link"/>
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+        <joint name="camera_optic_joint" type="fixed">
+            <origin xyz="0.0 0.0 0.0" rpy="${-pi/2} 0.0 ${-pi/2}"/>
+            <parent link="camera_link"/>
+            <child link="camera_optic_link"/>
+        </joint>
+    </xacro:macro>
+</robot>

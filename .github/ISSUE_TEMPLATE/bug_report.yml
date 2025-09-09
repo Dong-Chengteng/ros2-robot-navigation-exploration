@@ -1,0 +1,107 @@
+name: 🐛 Bug Report
+description: Report a bug to help us improve
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please fill in the following information to help us quickly locate and resolve the issue.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 Bug Description
+      description: Clearly and concisely describe the bug
+      placeholder: Please describe the issue you encountered in detail...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 🔄 Reproduction Steps
+      description: Steps to reproduce this bug
+      placeholder: |
+        1. Go to environment '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ Expected Behavior
+      description: Clearly and concisely describe what you expected to happen
+      placeholder: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: ❌ Actual Behavior
+      description: Clearly and concisely describe what actually happened
+      placeholder: What actually happened?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 🚨 Severity
+      description: The severity of this bug
+      options:
+        - Low - Minor issue, does not affect main functionality
+        - Medium - Affects some functionality, has workarounds
+        - High - Severely affects functionality, difficult to use
+        - Critical - System crash or data loss
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 🖥️ Environment Information
+      description: Please provide your environment information
+      placeholder: |
+        - OS: [e.g. Ubuntu 22.04]
+        - ROS2 Version: [e.g. Humble]
+        - Python Version: [e.g. 3.8]
+        - Hardware: [e.g. Simulation/Real Robot]
+        - Other relevant information
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📋 Log Files
+      description: If applicable, add relevant log files or error messages
+      placeholder: Please paste relevant logs or error messages...
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📝 Additional Information
+      description: Add any other context about the problem
+      placeholder: Any other relevant information...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ Checklist
+      description: Please confirm you have completed the following items
+      options:
+        - label: I have searched existing Issues and confirmed this is a new issue
+          required: true
+        - label: I have provided all required information
+          required: true
+        - label: I have tried the latest code version
+          required: true
+        - label: I have read the relevant documentation
+          required: false

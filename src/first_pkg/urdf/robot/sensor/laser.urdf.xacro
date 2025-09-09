@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+    <xacro:macro name="laser_xacro" params = "xyz">
+        <!-- 激光雷达模块 -->
+        <link name="laser_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.02" length="0.02"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="1.0 1.0 1.0 1.0"/>
+                </material>
+            </visual>
+        </link>
+        <!-- 雷达支撑杆零件 -->
+        <link name="laser_support_link">
+            <visual>
+                <!-- 雷达支撑杆位置 -->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 雷达支撑杆形状 -->
+                <geometry>
+                    <cylinder radius="0.01" length="0.1"/>
+                </geometry>
+                <!-- 雷达支撑杆材料 -->
+                <material name="blue">
+                    <color rgba="0.5 0.5 0.5 1.0"/>
+                </material>
+            </visual>    
+        </link>
+
+
+        <!-- l雷达连接 -->
+        <joint name="laser_joint" type="fixed">
+            <parent link="laser_support_link"/>
+            <child link="laser_link"/>
+            <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+        </joint>
+
+        <!-- 雷达支撑杆连接 -->
+        <joint name="laser_support_link_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="laser_support_link"/>
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+        <gazebo reference = "laser_link">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        <gazebo reference = "laser_support_link">
+            <material>Gazebo/Black</material>
+        </gazebo>        
+    </xacro:macro>
+</robot>

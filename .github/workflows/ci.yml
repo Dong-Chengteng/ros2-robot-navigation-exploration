@@ -1,0 +1,177 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      matrix:
+        ros-distro: [humble]
+        python-version: [3.8, 3.9, 3.10]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install ROS2 ${{ matrix.ros-distro }}
+      uses: ros-tooling/setup-ros@v0.6
+      with:
+        required-ros-distributions: ${{ matrix.ros-distro }}
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y python3-pip python3-colcon-common-extensions
+        sudo apt install -y ros-${{ matrix.ros-distro }}-navigation2
+        sudo apt install -y ros-${{ matrix.ros-distro }}-slam-toolbox
+        sudo apt install -y ros-${{ matrix.ros-distro }}-gazebo-ros-pkgs
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8 black isort mypy
+    
+    - name: Lint with flake8
+      run: |
+        flake8 src/first_pkg/first_pkg --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 src/first_pkg/first_pkg --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Format check with black
+      run: |
+        black --check src/first_pkg/first_pkg
+    
+    - name: Import sort check with isort
+      run: |
+        isort --check-only src/first_pkg/first_pkg
+    
+    - name: Type check with mypy
+      run: |
+        mypy src/first_pkg/first_pkg --ignore-missing-imports
+    
+    - name: Build workspace
+      run: |
+        cd ${{ github.workspace }}
+        colcon build --packages-select first_pkg
+    
+    - name: Run tests
+      run: |
+        cd ${{ github.workspace }}
+        colcon test --packages-select first_pkg
+        colcon test-result --all --verbose
+    
+    - name: Run Python tests
+      run: |
+        cd tests
+        python -m pytest test_exploration.py -v --cov=../src/first_pkg/first_pkg --cov-report=xml
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  build:
+    runs-on: ubuntu-22.04
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+    
+    - name: Install ROS2 Humble
+      uses: ros-tooling/setup-ros@v0.6
+      with:
+        required-ros-distributions: humble
+    
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y python3-pip python3-colcon-common-extensions
+        sudo apt install -y ros-humble-navigation2 ros-humble-slam-toolbox
+        sudo apt install -y ros-humble-gazebo-ros-pkgs
+        pip install -r requirements.txt
+    
+    - name: Build package
+      run: |
+        colcon build --packages-select first_pkg --cmake-args -DCMAKE_BUILD_TYPE=Release
+    
+    - name: Create release artifacts
+      run: |
+        mkdir -p release
+        cp -r install/ release/
+        cp -r src/ release/
+        cp requirements.txt release/
+        cp README.md release/
+        cp LICENSE release/
+        tar -czf ros2-smart-exploration.tar.gz -C release .
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ros2-smart-exploration-build
+        path: ros2-smart-exploration.tar.gz
+
+  security:
+    runs-on: ubuntu-22.04
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  documentation:
+    runs-on: ubuntu-22.04
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+    
+    - name: Install documentation dependencies
+      run: |
+        pip install sphinx sphinx-rtd-theme
+        pip install sphinxcontrib-mermaid
+    
+    - name: Build documentation
+      run: |
+        cd docs
+        sphinx-build -b html . _build/html
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/_build/html

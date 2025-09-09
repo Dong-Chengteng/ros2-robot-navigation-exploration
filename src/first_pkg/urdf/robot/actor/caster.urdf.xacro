@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+<xacro:include filename="$(find first_pkg)/urdf/robot/common_inertial.xacro"/>
+    <xacro:macro name="caster_xacro" params = "caster_wheel_name xyz">
+        <!-- 轮子模块 -->
+        <link name="${caster_wheel_name}_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <sphere radius="0.016"/>
+                </geometry>
+                <material name="red">
+                    <color rgba="0.0 1.0 1.0 0.8"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <sphere radius="0.016"/>
+                </geometry>
+                <material name="red">
+                    <color rgba="0.0 1.0 1.0 0.8"/>
+                </material>                
+            </collision>
+            <xacro:inertial_sphere mass = "0.05" radius = "0.016" />
+        </link>
+
+        <!-- 轮子连接 -->
+        <joint name="${caster_wheel_name}_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="${caster_wheel_name}_link"/>
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+            
+        </joint>
+
+        <gazebo reference = "${caster_wheel_name}_link">
+            <mu1 value = "0.0" />
+            <mu2 value = "0.0" />
+            <kp value = "1000000000.0" />
+            <kd value = "1.0" />
+        </gazebo>
+
+    </xacro:macro>
+</robot>

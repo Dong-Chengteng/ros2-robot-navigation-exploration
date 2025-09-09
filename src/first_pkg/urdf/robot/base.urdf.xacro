@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+<xacro:include filename="$(find first_pkg)/urdf/robot/common_inertial.xacro"/>
+    <xacro:macro name="base_xacro" params = "radius length">\
+        <!-- 虚拟投影部件 -->
+        <link name="base_footprint">
+        </link>
+        <!-- 机器人底盘 -->
+        <link name="base_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                 </geometry>
+                <material name="white">
+                    <color rgba="1.0 1.0 1.0 0.5"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="${radius}" length="${length}"/>
+                 </geometry>
+                <material name="white">
+                    <color rgba="1.0 1.0 1.0 0.5"/>
+                </material>                   
+            </collision>
+
+            <xacro:inertial_cylinder mass="1.0" radius="${radius}" length="${length}" axis="z"/>
+
+        </link>
+        <joint name="joint_name" type="fixed">
+            <origin xyz="0.0 0.0 ${length/2 + 0.032-0.001}" rpy="0.0 0.0 0.0"/>
+            <parent link="base_footprint"/>
+            <child link="base_link"/>
+        </joint>
+    </xacro:macro >
+</robot>

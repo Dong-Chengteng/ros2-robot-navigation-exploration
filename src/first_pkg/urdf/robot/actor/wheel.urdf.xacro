@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+<xacro:include filename="$(find first_pkg)/urdf/robot/common_inertial.xacro"/>
+    <xacro:macro name="wheel_xacro" params = "wheel_name xyz">
+        <!-- 轮子模块 -->
+        <link name="${wheel_name}_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="1.57079 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.032" length="0.04"/>
+                </geometry>
+                <material name="red">
+                    <color rgba="0.0 1.0 1.0 0.8"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="1.57079 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.032" length="0.04"/>
+                </geometry>
+                <material name="red">
+                    <color rgba="0.0 1.0 1.0 0.8"/>
+                </material>                
+            </collision>
+            <xacro:inertial_cylinder  mass = "0.05" radius = "0.03" length = "0.04" axis = "y" />
+        </link>
+
+        <!-- 轮子连接 -->
+        <joint name="${wheel_name}_joint" type="continuous">
+            <parent link="base_link"/>
+            <child link="${wheel_name}_link"/>
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+            <axis xyz="0.0 1.0 0.0"/>
+        </joint>
+
+        <gazebo reference = "${wheel_name}_link">
+            <mu1 value = "20.0" />
+            <mu2 value = "20.0" />
+            <kp value = "1000000000.0" />
+            <kd value = "1.0" />
+        </gazebo>
+
+    </xacro:macro>
+</robot>

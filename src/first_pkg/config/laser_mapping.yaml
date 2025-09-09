@@ -1,0 +1,87 @@
+slam_toolbox:
+  ros__parameters:
+
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    # ROS Parameters - 激光雷达专用设置
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /scan
+    use_map_saver: true
+    mode: mapping
+
+    # 激光雷达范围设置 - 精确匹配你的激光雷达
+    min_laser_range: 0.12
+    max_laser_range: 8.0
+
+    # 地图更新设置 - 高频更新
+    map_publish_period: 0.02
+    map_update_interval: 0.05  # 每0.05秒更新一次地图
+    debug_logging: true
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    resolution: 0.05
+    minimum_time_interval: 0.02  # 降低最小时间间隔
+    transform_timeout: 0.2
+    tf_buffer_duration: 30.
+    stack_size_to_use: 40000000
+    enable_interactive_mode: true
+
+    # 扫描匹配参数 - 优化激光雷达数据处理
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.02  # 非常小的移动距离就触发更新
+    minimum_travel_heading: 0.02   # 非常小的转向角度就触发更新
+    scan_buffer_size: 20           # 增加扫描缓冲区
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1  
+    link_scan_maximum_distance: 8.0  # 匹配激光雷达最大范围
+    loop_search_maximum_distance: 5.0
+    do_loop_closing: true 
+    loop_match_minimum_chain_size: 10           
+    loop_match_maximum_variance_coarse: 3.0  
+    loop_match_minimum_response_coarse: 0.35    
+    loop_match_minimum_response_fine: 0.45
+
+    # 相关性搜索参数 - 优化激光雷达扫描匹配
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1 
+
+    # 回环检测参数
+    loop_search_space_dimension: 10.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # 扫描匹配器参数 - 专门针对激光雷达优化
+    distance_variance_penalty: 0.3      # 降低距离方差惩罚
+    angle_variance_penalty: 0.8         # 降低角度方差惩罚
+    fine_search_angle_offset: 0.00349     
+    coarse_search_angle_offset: 0.349   
+    coarse_angle_resolution: 0.0349        
+    minimum_angle_penalty: 0.8
+    minimum_distance_penalty: 0.3
+    use_response_expansion: true
+
+    # 激光雷达专用参数
+    laser_model_type: "likelihood_field"
+    laser_likelihood_max_dist: 2.0
+    laser_max_beams: 60
+    laser_z_hit: 0.95
+    laser_z_short: 0.1
+    laser_z_max: 0.05
+    laser_z_rand: 0.05
+    laser_sigma_hit: 0.2
+    laser_lambda_short: 0.1
+
+    # 地图质量参数
+    map_update_rate: 20.0  # 20Hz更新频率
+    max_queue_size: 20
+    scan_update_rate: 20.0

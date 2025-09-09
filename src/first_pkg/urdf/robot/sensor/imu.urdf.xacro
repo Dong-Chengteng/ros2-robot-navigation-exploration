@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+<xacro:include filename="$(find first_pkg)/urdf/robot/common_inertial.xacro"/>
+    <xacro:macro name="imu_xacro" params = "xyz">
+        <!-- IMU 模块 -->
+        <link name="imu_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.02 0.02 0.02"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.02 0.02 0.02"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>               
+            </collision>
+            <xacro:inertial_box mass = "0.05" x = "0.02" y = "0.02" z = "0.02"/>
+        </link>
+
+        <!-- imu连接 -->
+        <joint name="imu_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="imu_link"/>
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+<xacro:include filename="$(find first_pkg)/urdf/robot/common_inertial.xacro"/>
+    <xacro:macro name="infrared_sensor_xacro" params = "xyz">
+        <!-- 红外线传感器模块 -->
+        <link name="infrared_sensor_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.03 0.03 0.02"/>
+                </geometry>
+                <material name="dark_red">
+                    <color rgba="0.5 0.0 0.0 0.8"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.03 0.03 0.02"/>
+                </geometry>
+            </collision>
+            <xacro:inertial_box mass = "0.05" x = "0.03" y = "0.03" z = "0.02"/>
+        </link>
+
+        <!-- 红外线传感器连接 -->
+        <joint name="infrared_sensor_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="infrared_sensor_link"/>
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+        </joint>
+
+        <!-- Gazebo插件配置 -->
+        <gazebo reference="infrared_sensor_link">
+            <material>Gazebo/DarkRed</material>
+        </gazebo>
+    </xacro:macro>
+</robot>
+
+
+
+

@@ -1,0 +1,109 @@
+# 超高速SLAM配置 - 解决地图更新延迟问题
+# 专门针对监控显示的延迟问题进行优化
+
+slam_toolbox:
+  ros__parameters:
+
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /scan
+    use_map_saver: true
+    mode: mapping
+
+    # 传感器范围设置 - 修复为正确的值
+    min_laser_range: 0.12
+    max_laser_range: 8.0
+
+    # 超高速地图更新设置
+    map_publish_period: 0.005  # 5毫秒发布一次
+    map_update_interval: 0.01  # 10毫秒更新一次
+    debug_logging: true
+    throttle_scans: 1
+    transform_publish_period: 0.005  # 5毫秒发布变换
+    resolution: 0.05
+    minimum_time_interval: 0.005  # 5毫秒最小间隔
+    transform_timeout: 0.05  # 50毫秒超时
+    tf_buffer_duration: 30.
+    stack_size_to_use: 40000000
+    enable_interactive_mode: true
+
+    # 超敏感扫描匹配参数
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.001  # 1毫米就触发更新
+    minimum_travel_heading: 0.001   # 0.1度就触发更新
+    scan_buffer_size: 100           # 增大缓冲区
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1  
+    link_scan_maximum_distance: 8.0
+    loop_search_maximum_distance: 5.0
+    do_loop_closing: true 
+    loop_match_minimum_chain_size: 5  # 减少回环检测复杂度
+    loop_match_maximum_variance_coarse: 2.0  
+    loop_match_minimum_response_coarse: 0.4    
+    loop_match_minimum_response_fine: 0.5
+
+    # 快速相关性搜索参数
+    correlation_search_space_dimension: 0.1  # 减小搜索空间
+    correlation_search_space_resolution: 0.005  # 提高分辨率
+    correlation_search_space_smear_deviation: 0.05  # 减小偏差
+
+    # 回环检测参数
+    loop_search_space_dimension: 4.0  # 减小搜索空间
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.02
+
+    # 快速扫描匹配参数
+    distance_variance_penalty: 0.1  # 减小惩罚
+    angle_variance_penalty: 0.2     # 减小惩罚
+
+    fine_search_angle_offset: 0.00087  # 减小角度偏移
+    coarse_search_angle_offset: 0.087  # 减小粗搜索偏移
+    coarse_angle_resolution: 0.0087    # 提高角度分辨率
+    minimum_angle_penalty: 0.3  # 减小角度惩罚
+    minimum_distance_penalty: 0.1  # 减小距离惩罚
+    use_response_expansion: true
+
+    # 超高速更新频率
+    update_rate: 100.0  # 100Hz更新
+    map_update_rate: 100.0  # 100Hz地图更新
+    scan_update_rate: 100.0  # 100Hz扫描更新
+
+    # 快速激光模型参数
+    laser_model_type: "likelihood_field"
+    laser_likelihood_max_dist: 0.5  # 减小最大距离
+    laser_max_beams: 10  # 减少光束数量
+    laser_z_hit: 0.9
+    laser_z_short: 0.1
+    laser_z_max: 0.05
+    laser_z_rand: 0.05
+    laser_sigma_hit: 0.05  # 减小噪声
+    laser_lambda_short: 0.1
+
+    # 调试参数
+    debug_logging: true
+
+    # 消息队列参数
+    max_queue_size: 200  # 增大队列
+    transform_publish_period: 0.005  # 5毫秒发布变换
+
+    # 扫描角度范围
+    scan_angle_min: -3.14159
+    scan_angle_max: 3.14159
+    scan_angle_increment: 0.0174533
+
+    # 地图分辨率
+    resolution: 0.05
+
+    # 地图尺寸限制
+    map_size: 2000  # 减小地图尺寸

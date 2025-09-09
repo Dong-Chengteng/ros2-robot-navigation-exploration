@@ -1,0 +1,36 @@
+# PID导航参数配置文件
+# 用于配置PID控制器的各项参数（已完全替换传统控制）
+
+# 角度PID参数
+angle_kp: 1.5    # 角度比例增益 - 控制响应速度
+angle_ki: 0.1    # 角度积分增益 - 消除稳态误差
+angle_kd: 0.05   # 角度微分增益 - 抑制超调
+
+# 路径偏移PID参数
+offset_kp: 0.8   # 偏移比例增益 - 控制路径跟踪精度
+offset_ki: 0.05  # 偏移积分增益 - 消除路径偏移
+offset_kd: 0.02  # 偏移微分增益 - 抑制路径振荡
+
+# 控制阈值
+angle_threshold: 0.174533  # 角度阈值（弧度）- 10度
+offset_threshold: 0.3      # 路径偏移阈值（米）
+
+# 速度限制
+max_linear_speed: 0.8      # 最大线速度（m/s）
+max_angular_speed: 1.5     # 最大角速度（rad/s）
+min_linear_speed: 0.0      # 最小线速度（m/s）
+
+# 目标点参数
+goal_distance_threshold: 0.5      # 到达目标点的距离阈值（米）
+waypoint_distance_threshold: 0.5  # 到达中间点的距离阈值（米）
+
+# 调试选项
+debug_nav: true  # 是否启用导航调试输出
+
+# PID参数调优建议：
+# 1. 首先调整Kp，使系统有适当的响应速度
+# 2. 然后调整Ki，消除稳态误差
+# 3. 最后调整Kd，抑制超调和振荡
+# 4. 如果系统振荡，减小Kp或增大Kd
+# 5. 如果响应太慢，增大Kp
+# 6. 如果稳态误差大，增大Ki
